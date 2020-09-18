@@ -112,6 +112,7 @@ describeList list = "This list is " ++ case list of [] -> "empty."
                                                     other -> "longer."
 
 -- Returns highest of a list
+-- Debug statement from https://stackoverflow.com/a/9849243
 maximum' :: (Ord a, Show a) => [a] -> a
 maximum' [] = error "Cannot get maximum of empty list"
 maximum' [x] = trace ("maximum' [" ++ show x ++ "] == " ++ show x) $ x
@@ -134,26 +135,64 @@ maximum' (x:xs) = trace ("max " ++ show x ++ " (maximum' " ++ show xs ++ ")") $ 
 -- (max 2 5) -- returns 5
 
 
--- Returns highest of a list (without using max)
--- Debug statement from https://stackoverflow.com/a/9849243
+-- Returns highest of a list (without using max), my own implementation
 maximum'' :: (Ord a, Show a) => [a] -> a
 maximum'' [] = error "Cannot get maximum of empty list"
 maximum'' [x] = x
 maximum'' (x:xs)
-  | x < maximum'' xs = maximum'' xs
-  | otherwise = x
+  | x > maximum'' xs = x
+  | otherwise = maximum'' xs 
 
 -- Example
--- maximum' [2,5,1]
+-- maximum'' [2,5,1]
   -- First two patterns don't match
-  -- First guard check: 2 < maximum'' [5, 1] 
+  -- First guard check: 2 > maximum'' [5, 1] 
     -- Next recursion: maximum'' [5, 1] 
-    -- First guard check: 5 < maximum [1]
-    -- 5 < 1
-    -- False
-    -- Second guard check: yes return 5
-  -- Back a level: 2 < 5
-  -- True
-  -- maximum'' [5, 1] 
+    -- First guard check: 5 > maximum [1]
+    -- 5 > 1
+    -- True, return 5
+  -- Back a level: 2 > 5
+  -- First guard check: False
+  -- Second guard check:
+  -- maximum'' [5] 
   -- Which is 5
 
+-- Replicates value x times in a list
+replicate' :: Int -> a -> [a]
+replicate' times value 
+  | times <= 0 = []
+  | otherwise = value : replicate (times-1) value
+
+-- Returns first n elements from provided list
+take' :: Int -> [a] -> [a]
+take' n _
+  | n <= 0 = []
+take' _ [] = []
+take' n (x:xs) = x : (take' (n-1) xs)
+
+-- Reverse a list
+reverse' :: [a] -> [a]
+reverse' [] = []
+reverse' (x:xs) = (reverse' xs) ++ [x]
+
+-- Zip a list into pairs. 
+-- Ex. zip [1,2,3] [7,8] -- [(1,7), (2,8)]
+zip' :: [a] -> [b] -> [(a, b)] 
+zip' _ [] = []
+zip' [] _ = []
+zip' (x:xs) (y:ys) = (x, y) : zip' xs ys
+
+-- Checks if element is in the list
+elem' :: Eq a => a -> [a] -> Bool
+elem' _ [] = False
+elem' y (x:xs)
+  | x == y = True
+  | otherwise = elem' y xs
+
+-- Quicksort
+quicksort :: Ord a => [a] -> [a]
+quicksort [] = []
+quicksort (x:xs) =
+  let smallerOrEqual = [n | n <- xs, n <= x ];
+      bigger = [n | n <- xs, n > x]
+  in quicksort smallerOrEqual ++ [x] ++ quicksort bigger
