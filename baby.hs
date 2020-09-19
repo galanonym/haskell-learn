@@ -2,27 +2,34 @@ import Debug.Trace
 
 doubleMe x = x + x -- function name, parameters, code that makes body of function
 
-doubleUs x y = doubleMe x + doubleMe y
-x `doubleUsInfix` y = doubleMe x + doubleMe y -- also as infix function
+---- Infix function
 
+doubleUs x y = doubleMe x + doubleMe y
+x `doubleUsInfix` y = doubleMe x + doubleMe y
+
+---- if..then..else
 doubleSmallNumber x = if x > 100
                         then x
                         else x * 2 -- else is mandatory
 
 doubleSmallNumber' x = (if x >100 then x else x * 2) + 1
 
+---- Lists
+
 lostNumbers = [4,8,15,16,23,42]
 
-lostNumbers' = lostNumbers ++ [99] -- append to list
+lostNumbers' = lostNumbers ++ [99] -- append
 
-smallCat = 'A' : " SMALL CAT" -- unshift to list
+smallCat = 'A' : " SMALL CAT" -- prepend
 
-letterB = "Steve Buscemi" !! 6 -- get 6th element
+letterB = "Steve Buscemi" !! 6 -- find 6th element
 letterB' = (!!) "Steve Buscemi" 6 -- as prefix not infix
 
 big13number = [13,26..] !! 124 -- infinite lists
 
-filterSpecial :: [Char] -> [Char] -- Type declaration -> means returns
+---- List comprehensions
+
+filterSpecial :: [Char] -> [Char]
 filterSpecial string = [ character | character  <- string, character `elem` '_':['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'] ]
 -- | -- how we want elements to be reflected in resulting list
 -- number <- numbers -- we draw elements from this list
@@ -30,17 +37,7 @@ filterSpecial string = [ character | character  <- string, character `elem` '_':
 
 boomBangs numbers = [ if number < 10 then "Boom!" else "Bang!" | number <- numbers, odd number ]
 
-exampleTuple = (3, 1.1, 'a', "hello") -- hold different element types
-
-zigzagTuples = zip [1,2,3] ['a', 'b', 'c'] -- create tuple from lists
-zigzagTuples' = zip [1..] ['a', 'b', 'c']
-
--- example
--- Find right triangle that
--- Sides are integers
--- Length of each side is 0<x<10
--- Sum of all sides is 24
-
+-- Find right triangle that has sides are integers, length of each side is 0<x<10, sum of all sides is 24
 -- generate all possible triples with elements less or equal 10
 triples = [ (a,b,c) | c <- [1..10], a <- [1..10], b <- [1..10] ] 
 triples' = [ (a,b,c) | c <- [1..10], a <- [1..c], b <- [1..a] ] 
@@ -52,6 +49,41 @@ rightAngles' = [(a,b,c) | (a,b,c) <- triples', a^2 + b^2 == c^2]
 -- apply last condition
 rightTriangles = [(a,b,c) | (a,b,c) <- rightAngles', a + b + c == 24]
 
+---- Tuples
+
+exampleTuple = (3, 1.1, 'a', "hello") -- hold different element types
+
+zigzagTuples = zip [1,2,3] ['a', 'b', 'c'] -- create tuple from lists
+zigzagTuples' = zip [1..] ['a', 'b', 'c']
+
+---- Types
+
+-- Int -- bounded integer 2^63
+-- Integer -- unbounded integer
+-- Float -- floating point
+-- Double -- float with more precision
+-- Bool -- boolean
+-- Char -- single character
+-- String -- list of single characters
+-- [Char] -- list of single characters
+
+-- type classes gives ability
+
+-- Eq -- testing for equality
+-- Ord -- testing for ordering < >
+-- Show -- printable as strings
+-- Read -- convert from sting to type
+-- Enum -- sequentially order
+-- Bounded -- has a min / max value
+-- Num -- can act as numbers (Int, Float etc.)
+-- Floating -- can act as floats
+-- Fractional -- can act as floats and fractions
+-- Integral -- can act as ints (Int, Integer)
+
+-- :: means "Has a type of"
+-- -> means "Returns"
+-- (Eq a) class constraint
+-- Eq a => apply type class Eq to type variable a
 circumference :: Float -> Float
 circumference r = 2 * pi * r
 
@@ -61,18 +93,20 @@ circumference' r = 2 * pi * r
 whatIsGreater = "abracadabra" `compare` "zebra" -- LT, GT or EQ? Will return ordering type variable
 whatIsGreater' = show whatIsGreater -- Convert to string
 
--- pattern matching for different function bodies
+---- Pattern matching
+
+-- for different function bodies
 errorMessage :: Int -> String
 errorMessage 404 = "Not Found"
 errorMessage 403 = "Forbidden"
 errorMessage 501 = "Internal Server Error"
 errorMessage i = "Other Error"
 
--- pattern matching in tuples
+-- in tuples
 third :: (a, b, c) -> c
 third (_, _, z) = z
 
--- pattern inside list comperhension
+-- pattern inside list comprehension
 listOfSumsOfPairs = [a + b | (a, b) <- [(1, 3), (4, 3), (2, 4), (5, 3)]] -- (a, b) is a pattern matched when drawing elements from list
 
 -- pattern for list, our own head implementation
@@ -80,7 +114,8 @@ head' :: [a] -> a
 head' [] = error "Can't call head on empty list" -- error function dies execution
 head' (x:_) = x -- x is first element, _ is rest of the list, paranteses used when binding to several variables (not a tuple)
 
--- guards
+---- Guards
+
 bmiTell :: Float -> Float -> String
 bmiTell weight height -- no equal sign when using guards
   | bmi <= skinny = "Underweight! " ++ bmiText -- guard is an if statement that falls through on false
@@ -96,28 +131,35 @@ bmiBulk :: [(Float, Float)] -> [Float]
 bmiBulk listOfPairs = [ calculate weight height | (weight, height) <- listOfPairs ]
   where calculate weight height = weight / height ^ 2 -- function inside where statement
 
--- let..in can be used in other expressions
+---- let..in
+
+-- can be used in other expressions
 -- things after let are locally scoped to expression after in
 squares = [let square x = x * x; twoMore = 2 in (square 5 + twoMore, square 4 + twoMore)] -- [(27, 18)]
 
--- let..in used in list comprehansion
+-- let..in used in list comprehension
 -- local variable avaiable in output and predicates not generator
 bmiBulk' :: [(Float, Float)] -> [Float]
 bmiBulk' listOfPairs = [bmi | (w, h) <- listOfPairs, let bmi = w / h ^ 2]
 
--- case..of as expression
+---- case..of
+
+-- can be used as experssion
+-- similar to switch statement
 describeList :: [a] -> String
 describeList list = "This list is " ++ case list of [] -> "empty."
                                                     [x] -> "singleton."
                                                     other -> "longer."
 
--- Returns highest of a list
--- Debug statement from https://stackoverflow.com/a/9849243
+---- Recursion
+
+-- returns highest of a list
+-- debug statement from https://stackoverflow.com/a/9849243
 maximum' :: (Ord a, Show a) => [a] -> a
 maximum' [] = error "Cannot get maximum of empty list"
 maximum' [x] = trace ("maximum' [" ++ show x ++ "] == " ++ show x) $ x
 maximum' (x:xs) = trace ("max " ++ show x ++ " (maximum' " ++ show xs ++ ")") $ max x (maximum' xs) 
--- Split list into head x and tail (rest) xs
+-- split list into head x and tail (rest) xs
 -- max -- returns the larger of its two arguments
 -- debugging, add at top -- import Debug.Trace
 -- trace <string> -- print to console
@@ -135,7 +177,7 @@ maximum' (x:xs) = trace ("max " ++ show x ++ " (maximum' " ++ show xs ++ ")") $ 
 -- (max 2 5) -- returns 5
 
 
--- Returns highest of a list (without using max), my own implementation
+-- returns highest of a list (without using max), my own implementation
 maximum'' :: (Ord a, Show a) => [a] -> a
 maximum'' [] = error "Cannot get maximum of empty list"
 maximum'' [x] = x
@@ -143,56 +185,84 @@ maximum'' (x:xs)
   | x > maximum'' xs = x
   | otherwise = maximum'' xs 
 
--- Example
+-- example
 -- maximum'' [2,5,1]
-  -- First two patterns don't match
-  -- First guard check: 2 > maximum'' [5, 1] 
-    -- Next recursion: maximum'' [5, 1] 
-    -- First guard check: 5 > maximum [1]
+  -- first two patterns don't match
+  -- first guard check: 2 > maximum'' [5, 1] 
+    -- next recursion: maximum'' [5, 1] 
+    -- first guard check: 5 > maximum [1]
     -- 5 > 1
-    -- True, return 5
-  -- Back a level: 2 > 5
-  -- First guard check: False
-  -- Second guard check:
+    -- true, return 5
+  -- back a level: 2 > 5
+  -- first guard check: False
+  -- second guard check:
   -- maximum'' [5] 
-  -- Which is 5
+  -- which is 5
 
--- Replicates value x times in a list
+-- replicates value x times in a list
 replicate' :: Int -> a -> [a]
 replicate' times value 
   | times <= 0 = []
   | otherwise = value : replicate (times-1) value
 
--- Returns first n elements from provided list
+-- returns first n elements from provided list
 take' :: Int -> [a] -> [a]
 take' n _
   | n <= 0 = []
 take' _ [] = []
 take' n (x:xs) = x : (take' (n-1) xs)
 
--- Reverse a list
+-- reverse a list
 reverse' :: [a] -> [a]
 reverse' [] = []
 reverse' (x:xs) = (reverse' xs) ++ [x]
 
--- Zip a list into pairs. 
--- Ex. zip [1,2,3] [7,8] -- [(1,7), (2,8)]
+-- zip a list into pairs. 
+-- ex. zip [1,2,3] [7,8] -- [(1,7), (2,8)]
 zip' :: [a] -> [b] -> [(a, b)] 
 zip' _ [] = []
 zip' [] _ = []
 zip' (x:xs) (y:ys) = (x, y) : zip' xs ys
 
--- Checks if element is in the list
+-- checks if element is in the list
 elem' :: Eq a => a -> [a] -> Bool
 elem' _ [] = False
 elem' y (x:xs)
   | x == y = True
   | otherwise = elem' y xs
 
--- Quicksort
+-- quicksort
 quicksort :: Ord a => [a] -> [a]
 quicksort [] = []
 quicksort (x:xs) =
   let smallerOrEqual = [n | n <- xs, n <= x ];
       bigger = [n | n <- xs, n > x]
   in quicksort smallerOrEqual ++ [x] ++ quicksort bigger
+
+---- Partially applied functions
+
+-- every function takes one parameter
+multipleThreeNumbers :: Int -> Int -> Int -> Int
+multipleThreeNumbers x y z = x * y * z
+multipleTwoNumbersWithNine = multipleThreeNumbers 9
+-- it partially applies 9 as parameter, is equivalent to:
+multipleTwoNumbersWithNine' y z = 9 * y * z
+
+---- Sectioning
+
+sumOfTwoAndThree = (+) 2 3 -- plus as prefix, is equivalent to:
+sumOfTwoAndThree' = (+2) 3 -- sectioning of plus function
+
+addTwo :: Num a => a -> a
+addTwo = (+2)
+
+isUpperAlphanum :: Char -> Bool
+isUpperAlphanum = (`elem` ['A'..'Z']) -- elem as infix function so second param is partially applied
+
+subtractTwoFromFive = subtract 2 5 -- subtract 2 from 5
+
+subtractTwo :: Num a => a -> a
+subtractTwo = (subtract 2) -- subtractTwo 5 -- 3
+subtractFromFive = (`subtract` 5) -- subtractFromFive 7 -- -2
+
+
