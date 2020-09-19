@@ -254,15 +254,25 @@ sumOfTwoAndThree = (+) 2 3 -- plus as prefix, is equivalent to:
 sumOfTwoAndThree' = (+2) 3 -- sectioning of plus function
 
 addTwo :: Num a => a -> a
-addTwo = (+2)
+addTwo = (+2) -- partially applied + functio
+
+appendLol :: String -> String 
+appendLol = (++ " LOL") -- partially applied ++ function
+
+prependLol :: String -> String
+prependLol = ("LOL " ++) -- infix functions can be sectioned from behind
+
+addAtBeginning :: Num a => [a] -> [a]
+addAtBeginning = (3:)
 
 isUpperAlphanum :: Char -> Bool
 isUpperAlphanum = (`elem` ['A'..'Z']) -- elem as infix function so second param is partially applied
 
+-- (-3) means negative value, use (subtract 3) when partially applying minus
 subtractTwoFromFive = subtract 2 5 -- subtract 2 from 5
 
-subtractTwo :: Num a => a -> a
-subtractTwo = (subtract 2) -- subtractTwo 5 -- 3
-subtractFromFive = (`subtract` 5) -- subtractFromFive 7 -- -2
-
-
+---- Higher order functions
+applyTwice :: (a -> a) -> a -> a -- first param is a function
+applyTwice f x = f (f x)
+-- > applyTwice (+3) 10 -- 16
+-- > applyTwice (++ " HAHA") "HEY" -- "HEY HAHA HAHA"
