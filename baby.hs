@@ -27,6 +27,43 @@ letterB' = (!!) "Steve Buscemi" 6 -- as prefix not infix
 
 big13number = [13,26..] !! 124 -- infinite lists
 
+---- Built in functions
+
+-- > succ 5 -- 6 -- next successor
+-- > min 5 4 -- 4 
+-- > max 5 4 -- 5
+-- > div 4 2 -- 2 -- integral division
+-- > subtract 5 4 -- -1 -- subtracts 5 from 4
+
+-- > head [5,4,3] -- 5
+-- > tail [5,4,3] -- [4,3] -- chops off head
+-- > last [5,4,3] -- 3
+-- > init [5,4,3] -- [5,4] -- everything but last element
+-- > length [5,4,3] -- 3
+-- > null [5,4,3] -- False -- is empty
+-- > null [] -- True
+-- > reverse [5,4,3] -- [3,4,5]
+-- > maximum [5,4,3] -- 5
+-- > minimum [5,4,3] -- 3
+-- > take 2 [5,4,3] -- [5,4] -- returns first 2 elements
+-- > drop 2 [5,4,3] -- [3] -- drops first 2 elements
+-- > sum [5,4,3] -- 12 
+-- > product [5,4,3] -- 60
+-- > elem 5 [5,4,3] -- True -- is element present in list
+-- > cycle [5,4,3] -- [5,4,3,5,4,3,5,4,3 ... (to infinity)]
+-- > repeat 5 -- [5,5,5,5 ... (to infinity)]
+-- > replicate 3 5 -- [5, 5, 5]
+
+-- > fst (5,4) -- 5 -- only pairs
+-- > snd (5,4) -- 4 -- only pairs
+-- > zip [5,4,3] ['a', 'b', 'c'] -- [(5, 'a'), (4, 'b'), (3, 'c')] -- zips elements of two lists into pairs
+
+-- > compare 2 4 -- LT -- checks for equality, returns GT LT EQ of Ordering type
+-- > show 5 -- "5" -- convert value as string
+-- > read "True" :: Bool -- True -- convert string, type must be supplied
+
+-- > flip replicate 3 5 -- [3,3,3,3,3] -- flips next function arguments
+
 ---- List comprehensions
 
 filterSpecial :: [Char] -> [Char]
@@ -241,6 +278,8 @@ quicksort (x:xs) =
 
 ---- Partially applied functions
 
+-- A curried function is a function that takes multiple arguments one at a time. 
+
 -- every function takes one parameter
 multipleThreeNumbers :: Int -> Int -> Int -> Int
 multipleThreeNumbers x y z = x * y * z
@@ -272,7 +311,26 @@ isUpperAlphanum = (`elem` ['A'..'Z']) -- elem as infix function so second param 
 subtractTwoFromFive = subtract 2 5 -- subtract 2 from 5
 
 ---- Higher order functions
+
 applyTwice :: (a -> a) -> a -> a -- first param is a function
 applyTwice f x = f (f x)
 -- > applyTwice (+3) 10 -- 16
 -- > applyTwice (++ " HAHA") "HEY" -- "HEY HAHA HAHA"
+
+-- similar to zip' function, but takes joining function
+zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith' _ [] _ = []
+zipWith' _ _ [] = []
+zipWith' f (x:xs) (y:ys) = f x y : zipWith' f xs ys
+
+zipper :: Num a => a -> a -> a
+zipper x y = x + y + 1
+-- > zipWith' zipper [6,2,3] [1,1,2] -- [8,4,6]
+-- > zipWith' (*) (replicate 5 2) [1..] -- [2,4,6,8,10]
+
+flip' :: (a -> b -> c) -> (b -> a -> c) -- takes a function returns a function
+flip' f = g
+  where g x y = f y x
+-- equivalent to:
+flip'' :: (a -> b -> c) -> b -> a -> c
+flip'' f x y = f y x
