@@ -8,7 +8,7 @@ class Monad {
 
   flatMap(fn) {
     return new Monad(() => {
-      fn(this.fn());
+      return fn(this.fn());
     });
   }
 
@@ -20,24 +20,26 @@ class Monad {
 const a = new Monad(() => {
   console.log('Begin calculation...');
   sleep(1);
-  const calculated = 'XXyyZZ';
-  console.log('Done!');
-  return calculated;
+  return 'XXyyZZ';
 });
 
 const b = a.flatMap((calculated) => {
   console.log('Uppercasing...');
   sleep(1);
   uppercased = calculated.toUpperCase();
-  console.log(uppercased)
+  return uppercased;
 });
 
-// Later in runtime
-
-b.preform();
-
+const c = b.flatMap((uppercased) => {
+  console.log('Outputting...');
+  sleep(1);
+  console.log(uppercased)
+});
 
 // Blocking node sleep function
 function sleep(n) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, n * 1000);
 }
+
+// Later in runtime
+c.preform();
