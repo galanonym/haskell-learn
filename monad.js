@@ -1,5 +1,5 @@
 // Monads are containers of functions that you can execute *later*.
-// Those functions can take some time to run.
+// Those functions can take some (blocking) time to run.
 // Once we call .preform() this function will be executed
 class Monad {
   constructor(fn) {
