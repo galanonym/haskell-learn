@@ -334,3 +334,18 @@ flip' f = g
 -- equivalent to:
 flip'' :: (a -> b -> c) -> b -> a -> c
 flip'' f x y = f y x
+
+map' :: (a -> b) -> [a] -> [b]
+map' _ [] = []
+map' f (x:xs) = f x : map' f xs
+-- > map' (+3) [1,5,3] -- [4,8,6]
+-- > map' fst [(1,2),(3,5),(6,1)] -- [1,3,6]
+
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' _ [] = []
+filter' predicate (x:xs) 
+  | predicate x = x : filter' predicate xs
+  | otherwise = filter' predicate xs
+-- > filter' (>3) [1,4,5,6,3,2] -- [4,5,6]
+-- > filter' even [1,4,5,6,3,2] -- [4,6,2]
+-- > filter' (`elem` ['A'..'Z']) "I am The Boss" -- "ITB"
