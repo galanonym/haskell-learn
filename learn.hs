@@ -34,6 +34,8 @@ big13number = [13,26..] !! 124 -- infinite lists
 -- > max 5 4 -- 5
 -- > div 4 2 -- 2 -- integral division
 -- > subtract 5 4 -- -1 -- subtracts 5 from 4
+-- > odd 3 -- True
+-- > even 4 -- True
 
 -- > head [5,4,3] -- 5
 -- > tail [5,4,3] -- [4,3] -- chops off head
@@ -63,6 +65,7 @@ big13number = [13,26..] !! 124 -- infinite lists
 -- > read "True" :: Bool -- True -- convert string, type must be supplied
 
 -- > flip replicate 3 5 -- [3,3,3,3,3] -- flips next function arguments
+-- > takeWhile (/=' ') "im a boss"  -- "im" -- returns list of elements as long as predicate holds true
 
 ---- List comprehensions
 
@@ -151,8 +154,9 @@ head' :: [a] -> a
 head' [] = error "Can't call head on empty list" -- error function dies execution
 head' (x:_) = x -- x is first element, _ is rest of the list, paranteses used when binding to several variables (not a tuple)
 
----- Guards
+---- Guards and where
 
+-- can be used after pattern matching line
 bmiTell :: Float -> Float -> String
 bmiTell weight height -- no equal sign when using guards
   | bmi <= skinny = "Underweight! " ++ bmiText -- guard is an if statement that falls through on false
@@ -349,3 +353,18 @@ filter' predicate (x:xs)
 -- > filter' (>3) [1,4,5,6,3,2] -- [4,5,6]
 -- > filter' even [1,4,5,6,3,2] -- [4,6,2]
 -- > filter' (`elem` ['A'..'Z']) "I am The Boss" -- "ITB"
+
+-- better quicksort using filter function
+quicksort' :: Ord a => [a] -> [a]
+quicksort' [] = []
+quicksort' (x:xs) = quicksort' (filter' (<= x) xs) ++ [x] ++ quicksort' (filter' (> x) xs)
+
+collaz :: Int -> [Int]
+collaz 1 = [1]
+collaz i
+  | even i = i : collaz (i `div` 2)
+  | odd i = i : collaz (i * 3 + 1)
+
+-- for numbers 1 to 100 how many collaz chains have length grater then 15?
+numLongChains :: Int
+numLongChains = length (filter (>15) (map length (map collaz [1..100])))
