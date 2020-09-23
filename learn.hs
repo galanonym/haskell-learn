@@ -368,3 +368,21 @@ collaz i
 -- for numbers 1 to 100 how many collaz chains have length grater then 15?
 numLongChains :: Int
 numLongChains = length (filter (>15) (map length (map collaz [1..100])))
+
+-- lambda pattern matching
+onlyHeads = map (\(x:xs) -> x) [[1,2,3], [2,3,4]]
+
+-- foldl applies binary function to accumulator and left value of the list and so on returns accumulator
+sum' :: Num a => [a] -> a
+sum' xs = foldl (\acc x -> acc + x) 0 xs -- takes binary function, starting accumulator, list
+
+sum'' :: Num a => [a] -> a
+sum'' = foldl (+) 0 -- returns a function that takes list as first argument
+
+-- foldr takes values from the list from right to left
+map'' :: (a -> b) -> [a] -> [b]
+map'' f xs = foldr (\x acc -> f x : acc ) [] xs -- reversed order of arguments in binary function
+-- > map'' (+3) [1,2,3] -- [4,5,6]
+
+elem'' :: Eq a => a -> [a] -> Bool
+elem'' e xs = foldr (\x acc -> (if x == e then True else acc)) False xs
