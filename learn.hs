@@ -38,6 +38,11 @@ import Debug.Trace
 -- > subtract 5 4 -- -1 -- subtracts 5 from 4
 -- > odd 3 -- True
 -- > even 4 -- True
+-- > negate -5 -- 5 -- change sign of number
+-- > abs -4 -- 4 -- absolute value
+-- > ceiling 1.09 -- 2
+-- > floor 1.89 -- 1
+-- > round 1.89 -- 2
 
 -- > head [5,4,3] -- 5
 -- > tail [5,4,3] -- [4,3] -- chops off head
@@ -65,6 +70,7 @@ import Debug.Trace
 -- > fst (5,4) -- 5 -- only pairs
 -- > snd (5,4) -- 4 -- only pairs
 -- > zip [5,4,3] ['a', 'b', 'c'] -- [(5, 'a'), (4, 'b'), (3, 'c')] -- zips elements of two lists into pairs
+-- > zipWith (+) [5,4,3] [1,2,3] -- [6,6,6]
 
 -- > compare 2 4 -- LT -- checks for equality, returns GT LT EQ of Ordering type
 -- > show 5 -- "5" -- convert value as string
@@ -428,3 +434,29 @@ bigResult' = sum $ filter (>10) $ map (*2) [2..10] -- 80
 -- $ is a normal function that can be mapped
 calculations :: [Float]
 calculations = map ($ 3) [(4+), (10*), (^2), sqrt] -- [7.0, 30.0, 9.0, 1.7320508]
+
+---- Functional composition
+
+makeAllNegative :: Num a => [a] -> [a]
+makeAllNegative = map (\x -> negate $ abs x) -- returns function that needs list as first argument
+
+makeAllNegative' :: Num a => [a] -> [a]
+makeAllNegative' = map (negate . abs) -- number is abs then it is negated
+
+makeAllNegative'' :: Num a => [a] -> [a]
+makeAllNegative'' = map $ negate . abs -- functional application can be used in this case because only one argument is needed
+
+biggerExample :: (Num a, Ord a) => [a]
+biggerExample = replicate 2 (product (map (*3) (zipWith max [1,5] [4,2])))
+
+biggerExample' :: (Num a, Ord a) => [a]
+biggerExample' = replicate 2 . product . map (*3) $ zipWith max [1,5] [4,2] 
+
+---- Better error messages
+
+-- > let res = negate . abs 5 
+-- returns a cryptic error merrage
+-- try with type annotation, what do we expect res to be?
+-- > let res :: Num a => a; res = negate . abs 5
+-- much better, indicates problem with (.) too many arguments
+-- :set -XTypeApplications (https://www.reddit.com/r/haskell/comments/iydvze/tips_on_how_to_make_sense_of_haskell_errors/g6c7al6/)
