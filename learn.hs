@@ -1,31 +1,33 @@
 import Debug.Trace
 
-doubleMe x = x + x -- function name, parameters, code that makes body of function
+---- Built in types
 
----- Infix function
+-- Int -- bounded integer 2^63
+-- Integer -- unbounded integer
+-- Float -- floating point
+-- Double -- float with more precision
+-- Bool -- boolean
+-- Char -- single character
+-- String -- list of single characters
+-- [Char] -- list of single characters
 
-doubleUs x y = doubleMe x + doubleMe y
-x `doubleUsInfix` y = doubleMe x + doubleMe y
+-- type classes gives ability
 
----- if..then..else
-doubleSmallNumber x = if x > 100
-                        then x
-                        else x * 2 -- else is mandatory
+-- Eq -- testing for equality
+-- Ord -- testing for ordering < >
+-- Show -- printable as strings
+-- Read -- convert from sting to type
+-- Enum -- sequentially order
+-- Bounded -- has a min / max value
+-- Num -- can act as numbers (Int, Float etc.)
+-- Floating -- can act as floats
+-- Fractional -- can act as floats and fractions
+-- Integral -- can act as ints (Int, Integer)
 
-doubleSmallNumber' x = (if x >100 then x else x * 2) + 1
-
----- Lists
-
-lostNumbers = [4,8,15,16,23,42]
-
-lostNumbers' = lostNumbers ++ [99] -- append
-
-smallCat = 'A' : " SMALL CAT" -- prepend
-
-letterB = "Steve Buscemi" !! 6 -- find 6th element
-letterB' = (!!) "Steve Buscemi" 6 -- as prefix not infix
-
-big13number = [13,26..] !! 124 -- infinite lists
+-- :: means "Has a type of"
+-- -> means "Returns"
+-- (Eq a) class constraint
+-- Eq a => apply type class Eq to type variable a
 
 ---- Built in functions
 
@@ -55,6 +57,10 @@ big13number = [13,26..] !! 124 -- infinite lists
 -- > cycle [5,4,3] -- [5,4,3,5,4,3,5,4,3 ... (to infinity)]
 -- > repeat 5 -- [5,5,5,5 ... (to infinity)]
 -- > replicate 3 5 -- [5, 5, 5]
+-- > and [True, False, True] -- False
+-- > and [True, True, True] -- True
+-- > (&&) True False -- False
+-- > (||) True False -- True
 
 -- > fst (5,4) -- 5 -- only pairs
 -- > snd (5,4) -- 4 -- only pairs
@@ -65,7 +71,46 @@ big13number = [13,26..] !! 124 -- infinite lists
 -- > read "True" :: Bool -- True -- convert string, type must be supplied
 
 -- > flip replicate 3 5 -- [3,3,3,3,3] -- flips next function arguments
+-- > flip (:) [2] 1 -- [1,2] -- flips : so last argument is added to beginning of list
 -- > takeWhile (/=' ') "im a boss"  -- "im" -- returns list of elements as long as predicate holds true
+
+-- > foldl (\acc x -> acc + x) 0 [1,2,3] -- 6 -- takes binary function, starting accumulator and list, applies function from left to each element accumulationg
+-- > foldr (\x acc -> x : acc) [] [1,2,3] -- [3,2,1] -- takes binary function, starting accumulator and list, applies function right to each element accumulationg
+-- > foldl1 -- assumes first element from left as accumulator and moves to next
+-- > foldr1 -- assumes first element from right as accumulator and moves to next
+-- > scanl, scanr, scanl1, scanr1 -- same as fold's, but report all intermediate accumulator states in a list, used to debug scans
+
+---- Functions
+
+doubleMe x = x + x -- function name, parameters, code that makes body of function
+
+doubleUs x y = doubleMe x + doubleMe y
+x `doubleUsInfix` y = doubleMe x + doubleMe y -- infix functions
+
+-- assigning special character function
+(&&&) :: Bool -> Bool -> Bool
+True &&& x = x
+False &&& _ = False
+
+---- if..then..else
+doubleSmallNumber x = if x > 100
+                        then x
+                        else x * 2 -- else is mandatory
+
+doubleSmallNumber' x = (if x >100 then x else x * 2) + 1
+
+---- Lists
+
+lostNumbers = [4,8,15,16,23,42]
+
+lostNumbers' = lostNumbers ++ [99] -- append
+
+smallCat = 'A' : " SMALL CAT" -- prepend
+
+letterB = "Steve Buscemi" !! 6 -- find 6th element
+letterB' = (!!) "Steve Buscemi" 6 -- as prefix not infix
+
+big13number = [13,26..] !! 124 -- infinite lists
 
 ---- List comprehensions
 
@@ -97,33 +142,6 @@ zigzagTuples = zip [1,2,3] ['a', 'b', 'c'] -- create tuple from lists
 zigzagTuples' = zip [1..] ['a', 'b', 'c']
 
 ---- Types
-
--- Int -- bounded integer 2^63
--- Integer -- unbounded integer
--- Float -- floating point
--- Double -- float with more precision
--- Bool -- boolean
--- Char -- single character
--- String -- list of single characters
--- [Char] -- list of single characters
-
--- type classes gives ability
-
--- Eq -- testing for equality
--- Ord -- testing for ordering < >
--- Show -- printable as strings
--- Read -- convert from sting to type
--- Enum -- sequentially order
--- Bounded -- has a min / max value
--- Num -- can act as numbers (Int, Float etc.)
--- Floating -- can act as floats
--- Fractional -- can act as floats and fractions
--- Integral -- can act as ints (Int, Integer)
-
--- :: means "Has a type of"
--- -> means "Returns"
--- (Eq a) class constraint
--- Eq a => apply type class Eq to type variable a
 circumference :: Float -> Float
 circumference r = 2 * pi * r
 
@@ -380,9 +398,33 @@ sum'' :: Num a => [a] -> a
 sum'' = foldl (+) 0 -- returns a function that takes list as first argument
 
 -- foldr takes values from the list from right to left
+-- used when building a new list from a list
 map'' :: (a -> b) -> [a] -> [b]
 map'' f xs = foldr (\x acc -> f x : acc ) [] xs -- reversed order of arguments in binary function
 -- > map'' (+3) [1,2,3] -- [4,5,6]
 
 elem'' :: Eq a => a -> [a] -> Bool
 elem'' e xs = foldr (\x acc -> (if x == e then True else acc)) False xs
+
+filter'' :: (a -> Bool) -> [a] -> [a]
+filter'' p = foldr (\x acc -> (if p x then x : acc else acc)) [] -- returns a function that takes list as first argument, p = predicate
+
+-- foldr f z [3,4,5,6] -- is equivalent to
+-- f 3 (f 4 (f 5 (f 6 z)))
+
+-- foldl f z [3,4,5,6] -- is equivalent to
+-- f (f (f (f z 3) 4) 5) 6)
+
+---- Functional application operator $
+
+-- when $, the expression on right is becoming parameter the function on the left
+
+bigResult :: Int
+bigResult = sum (filter (>10) (map (*2) [2..10])) -- 80
+-- equivalent
+bigResult' = sum $ filter (>10) $ map (*2) [2..10] -- 80
+-- f $ g $ j <==> f $ (g $ j)
+
+-- $ is a normal function that can be mapped
+calculations :: [Float]
+calculations = map ($ 3) [(4+), (10*), (^2), sqrt] -- [7.0, 30.0, 9.0, 1.7320508]
