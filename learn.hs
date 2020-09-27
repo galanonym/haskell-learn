@@ -93,6 +93,9 @@ import Data.List
 -- > words "hey you boss" -- ["hey", "you", "boss"] -- splits string into list of words by whitespace
 -- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
 -- > sort [1,3,2] -- [1,2,3]
+-- > tails [1,2,3] -- [[1,2,3], [2,3], [3], []] -- takes list and sucessfully applies tails to it
+-- > isPrefixOf [1,2] [1,2,3] -- True -- tells if second list starts with the first one
+-- > any (>4) [1,2,3] -- False -- takes predicate function and tells if any element in list satisfies it
 
 ---- Functions
 
@@ -367,9 +370,7 @@ zipper x y = x + y + 1
 flip' :: (a -> b -> c) -> (b -> a -> c) -- takes a function returns a function
 flip' f = g
   where g x y = f y x
--- equivalent to:
-flip'' :: (a -> b -> c) -> b -> a -> c
-flip'' f x y = f y x
+flip'' f x y = f y x -- we can decompose first function as pattern
 
 map' :: (a -> b) -> [a] -> [b]
 map' _ [] = []
@@ -407,8 +408,6 @@ onlyHeads = map (\(x:xs) -> x) [[1,2,3], [2,3,4]]
 -- foldl applies binary function to accumulator and left value of the list and so on returns accumulator
 sum' :: Num a => [a] -> a
 sum' xs = foldl (\acc x -> acc + x) 0 xs -- takes binary function, starting accumulator, list
-
-sum'' :: Num a => [a] -> a
 sum'' = foldl (+) 0 -- returns a function that takes list as first argument
 
 -- foldr takes values from the list from right to left
@@ -435,7 +434,6 @@ filter'' p = foldr (\x acc -> (if p x then x : acc else acc)) [] -- returns a fu
 
 bigResult :: Int
 bigResult = sum (filter (>10) (map (*2) [2..10])) -- 80
--- equivalent
 bigResult' = sum $ filter (>10) $ map (*2) [2..10] -- 80
 -- f $ g $ j <==> f $ (g $ j)
 
@@ -447,17 +445,11 @@ calculations = map ($ 3) [(4+), (10*), (^2), sqrt] -- [7.0, 30.0, 9.0, 1.7320508
 
 makeAllNegative :: Num a => [a] -> [a]
 makeAllNegative = map (\x -> negate $ abs x) -- returns function that needs list as first argument
-
-makeAllNegative' :: Num a => [a] -> [a]
 makeAllNegative' = map (negate . abs) -- number is abs then it is negated
-
-makeAllNegative'' :: Num a => [a] -> [a]
 makeAllNegative'' = map $ negate . abs -- functional application can be used in this case because only one argument is needed
 
 biggerExample :: (Num a, Ord a) => [a]
 biggerExample = replicate 2 (product (map (*3) (zipWith max [1,5] [4,2])))
-
-biggerExample' :: (Num a, Ord a) => [a]
 biggerExample' = replicate 2 . product . map (*3) $ zipWith max [1,5] [4,2] 
 
 ---- Better error messages
@@ -471,14 +463,17 @@ biggerExample' = replicate 2 . product . map (*3) $ zipWith max [1,5] [4,2]
 
 ---- Solving problems with module functions
 
--- > words "hey you boss" -- ["hey", "you", "boss"] -- splits string into list of words by whitespace
--- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
--- > sort [1,3,2] -- [1,2,3]
-
 -- Make touples with word count in string
 -- ex. countingWords ["wa wa wee wa"] -- [(wa, 3), (wee, 1)]
 countingWords :: String -> [(String, Int)]
 countingWords string = map (\words -> (head words, length words)) $ (group . sort . words) string
+countingWords' = map (\words -> (head words, length words)) . group . sort . words -- make it point free style
 
-countingWords' :: String -> [(String, Int)]
-countingWords' = map (\words -> (head words, length words)) . group . sort . words
+-- Check if list [3,4] is contained in [1,2,3,4,5]
+
+isInList :: Eq a => [a] -> [a] -> Bool 
+isInList needle haystack = any (==True) $ map (\part -> isPrefixOf needle part) $ tails haystack
+isInList' needle = any (==True) . map (\part -> isPrefixOf needle part) . tails -- make it point free style
+isInList'' needle = any (==True) . map (isPrefixOf needle) . tails -- lambda can be omittend 
+isInList''' needle = any (isPrefixOf needle) . tails -- any works like map
+isInList'''' needle = any (needle `isPrefixOf`) . tails -- more readable as infix function
