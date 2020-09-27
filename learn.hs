@@ -1,4 +1,5 @@
-import Debug.Trace
+import Debug.Trace (trace) -- only import trace function
+import Data.List
 
 ---- Built in types
 
@@ -85,6 +86,13 @@ import Debug.Trace
 -- > foldl1 -- assumes first element from left as accumulator and moves to next
 -- > foldr1 -- assumes first element from right as accumulator and moves to next
 -- > scanl, scanr, scanl1, scanr1 -- same as fold's, but report all intermediate accumulator states in a list, used to debug scans
+
+---- Data.List functions
+
+-- > nub [1,1,2,3,3] -- [1,2,3] -- only unique list elements
+-- > words "hey you boss" -- ["hey", "you", "boss"] -- splits string into list of words by whitespace
+-- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
+-- > sort [1,3,2] -- [1,2,3]
 
 ---- Functions
 
@@ -460,3 +468,17 @@ biggerExample' = replicate 2 . product . map (*3) $ zipWith max [1,5] [4,2]
 -- > let res :: Num a => a; res = negate . abs 5
 -- much better, indicates problem with (.) too many arguments
 -- :set -XTypeApplications (https://www.reddit.com/r/haskell/comments/iydvze/tips_on_how_to_make_sense_of_haskell_errors/g6c7al6/)
+
+---- Solving problems with module functions
+
+-- > words "hey you boss" -- ["hey", "you", "boss"] -- splits string into list of words by whitespace
+-- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
+-- > sort [1,3,2] -- [1,2,3]
+
+-- Make touples with word count in string
+-- ex. countingWords ["wa wa wee wa"] -- [(wa, 3), (wee, 1)]
+countingWords :: String -> [(String, Int)]
+countingWords string = map (\words -> (head words, length words)) $ (group . sort . words) string
+
+countingWords' :: String -> [(String, Int)]
+countingWords' = map (\words -> (head words, length words)) . group . sort . words
