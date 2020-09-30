@@ -1,6 +1,7 @@
 import Debug.Trace (trace) -- only import trace function
 import Data.List
 import Data.Char
+import qualified Data.Map as Map -- Map functions clash with Prelude
 
 ---- Built in types
 
@@ -82,6 +83,9 @@ import Data.Char
 -- > flip (:) [2] 1 -- [1,2] -- flips : so last argument is added to beginning of list
 -- > takeWhile (/=' ') "im a boss"  -- "im" -- returns list of elements as long as predicate holds true
 
+-- > map (+3) [5,4,3] -- [8, 7, 6] -- applies function to each element of list, returns new list
+-- > filter (>3) [1,4,5,6,3,2] -- [4,5,6] -- returns the list of those elements that satisfy the predicate
+
 -- > foldl (\acc x -> acc + x) 0 [1,2,3] -- 6 -- takes binary function, starting accumulator and list, applies function from left to each element accumulationg
 -- > foldr (\x acc -> x : acc) [] [1,2,3] -- [3,2,1] -- takes binary function, starting accumulator and list, applies function right to each element accumulationg
 -- > foldl1 -- assumes first element from left as accumulator and moves to next
@@ -106,6 +110,15 @@ import Data.Char
 -- > ord 'a' -- 97 -- numeric representation for char from unicode table
 -- > chr 97 -- 'a' -- convert numeric representation to char
 -- > digitToInt '3' -- 3 -- convert numeric character to corresponding integer 
+-- > isDigit '3' -- True -- returns true if character is a digit
+
+---- Data.Map functions
+
+-- > Map.fromList [("AB", 1), ("CD", 1)] -- convert list of pairs to map type -- when printed it prints in fromList form
+-- > Map.lookup "betty" phoneBook -- Just "555-340-123" -- finds value by key in map, returns Maybe
+-- > Map.insert "grace" "341-5400" phoneBook -- returns new Map with new entry
+-- > Map.size phoneBook -- 3 -- returns size of the Map
+-- > Map.map (0 ++)
 
 ---- Functions
 
@@ -516,3 +529,26 @@ firstTo40' = find ((==40) . digitSum) [1..]
 
 firstTo :: Int -> Maybe Int 
 firstTo n = find ((==n) . digitSum) [1..]
+
+-- Data.Map
+
+phoneBook :: Map.Map String String -- we provide type and two expected types inside
+phoneBook = Map.fromList $ [("betty", "555-340-123"), ("bonnie", "555-342-34"),("wendy", "555-333-33")]
+
+-- find value in map by corresponding key
+bettysNumber :: Maybe String
+bettysNumber = Map.lookup "betty" phoneBook -- Just "555-340-123"
+
+updatedPhoneBook :: Map.Map String String -- we provide type and two expected types inside
+updatedPhoneBook = Map.insert "grace" "341-9021" phoneBook
+
+phoneBookSize :: Int
+phoneBookSize = Map.size phoneBook
+
+-- convert phone number strings to list of digits in phoneBook map
+
+string2digits :: String -> [Int]
+string2digits = map digitToInt . filter isDigit
+
+phoneBookInt :: Map.Map String [Int]
+phoneBookInt = Map.map string2digits phoneBook
