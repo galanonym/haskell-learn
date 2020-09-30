@@ -1,5 +1,6 @@
 import Debug.Trace (trace) -- only import trace function
 import Data.List
+import Data.Char
 
 ---- Built in types
 
@@ -94,8 +95,17 @@ import Data.List
 -- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
 -- > sort [1,3,2] -- [1,2,3]
 -- > tails [1,2,3] -- [[1,2,3], [2,3], [3], []] -- takes list and sucessfully applies tails to it
--- > isPrefixOf [1,2] [1,2,3] -- True -- tells if second list starts with the first one
+-- > isPrefixOf [1,2] [1,2,3] -- True -- if second list starts with the first one
 -- > any (>4) [1,2,3] -- False -- takes predicate function and tells if any element in list satisfies it
+-- > isInfixOf [2,3] [1,2,3,4] -- True -- if sectond list includes first one
+-- > foldl' - stricter version of foldl that does not stack overflow
+-- > find (>4) [3,4,5,6] -- Just 5 -- stops after finding element matching predicate, returns Maybe type
+
+---- Data.Char functions
+
+-- > ord 'a' -- 97 -- numeric representation for char from unicode table
+-- > chr 97 -- 'a' -- convert numeric representation to char
+-- > digitToInt '3' -- 3 -- convert numeric character to corresponding integer 
 
 ---- Functions
 
@@ -408,6 +418,7 @@ onlyHeads = map (\(x:xs) -> x) [[1,2,3], [2,3,4]]
 -- foldl applies binary function to accumulator and left value of the list and so on returns accumulator
 sum' :: Num a => [a] -> a
 sum' xs = foldl (\acc x -> acc + x) 0 xs -- takes binary function, starting accumulator, list
+sum'' :: Num a => [a] -> a -- needs type annotation or error
 sum'' = foldl (+) 0 -- returns a function that takes list as first argument
 
 -- foldr takes values from the list from right to left
@@ -441,7 +452,7 @@ bigResult' = sum $ filter (>10) $ map (*2) [2..10] -- 80
 calculations :: [Float]
 calculations = map ($ 3) [(4+), (10*), (^2), sqrt] -- [7.0, 30.0, 9.0, 1.7320508]
 
----- Functional composition
+---- Functional composition operator .
 
 makeAllNegative :: Num a => [a] -> [a]
 makeAllNegative = map (\x -> negate $ abs x) -- returns function that needs list as first argument
@@ -477,3 +488,31 @@ isInList' needle = any (==True) . map (\part -> isPrefixOf needle part) . tails 
 isInList'' needle = any (==True) . map (isPrefixOf needle) . tails -- lambda can be omittend 
 isInList''' needle = any (isPrefixOf needle) . tails -- any works like map
 isInList'''' needle = any (needle `isPrefixOf`) . tails -- more readable as infix function
+
+-- Encode message in ceasar cipther
+
+encodeCeasar :: Int -> [Char] -> [Char]
+encodeCeasar offset message = map chr $ map (+ offset) $ map ord message -- ord returns unicode number for a character
+encodeCeasar' offset = map chr . map (+ offset) . map ord -- point free style
+encodeCeasar'' offset = map (chr . (+ offset) . ord) -- one map only
+encodeCeasar''' offset = map $ chr . (+ offset) . ord -- functional application
+
+decodeCeasar :: Int -> [Char] -> [Char]
+decodeCeasar offset message = encodeCeasar (negate offset) message
+decodeCeasar' offset = encodeCeasar $ negate offset -- without message
+decodeCeasar'' = encodeCeasar . negate -- point free style
+
+-- First natural numbert with sum of its digits equials 40
+
+-- Subfunction
+digitSum :: Int -> Int 
+digitSum = sum . map (\c -> read [c] :: Int) . show
+digitSum' :: Int -> Int
+digitSum' = sum . map digitToInt . show
+
+firstTo40 :: Maybe Int 
+firstTo40 = find (\n -> digitSum n == 40) [1..]
+firstTo40' = find ((==40) . digitSum) [1..]
+
+firstTo :: Int -> Maybe Int 
+firstTo n = find ((==n) . digitSum) [1..]
