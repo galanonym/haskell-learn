@@ -1,7 +1,17 @@
+-- import must be on top
+
+---- Build in modules
+
 import Debug.Trace (trace) -- only import trace function
 import Data.List
 import Data.Char
 import qualified Data.Map as Map -- Map functions clash with Prelude
+
+---- User defined modules
+
+import qualified Geometry.Sphere as Sphere -- both have function "area" defined
+import qualified Geometry.Cuboid as Cuboid
+-- > Cuboid.area 1 2 3 -- 22.0 
 
 ---- Built in types
 
@@ -552,3 +562,5 @@ string2digits = map digitToInt . filter isDigit
 
 phoneBookInt :: Map.Map String [Int]
 phoneBookInt = Map.map string2digits phoneBook
+
+
