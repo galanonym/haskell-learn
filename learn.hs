@@ -571,33 +571,45 @@ phoneBookInt = Map.map string2digits phoneBook
 
 ---- New Data types
 
--- Circle is value constructor, Float Float Float are fields
--- Circle is a function that takes three Float and returns Shape
+-- CircleS is value constructor, Float Float Float are fields
+-- CircleS is a function that takes three Float and returns ShapeS
 -- deriving (Show) make this type part of Show type class, to be able to print to console
-data Shape = Circle Float Float Float | Rectangle Float Float Float Float deriving (Show)
+data ShapeS = CircleS Float Float Float | RectangleS Float Float Float Float deriving (Show)
 
-area :: Shape -> Float
+area :: ShapeS -> Float
 -- pattern match against different value constructors
 -- we bind its fields to variable names or _
-area (Circle _ _ r) = pi * r ^ 2
-area (Rectangle x1 y1 x2 y2) = (abs $ x2 - x1) * (abs $ y2 - y1)
+area (CircleS _ _ r) = pi * r ^ 2
+area (RectangleS x1 y1 x2 y2) = (abs $ x2 - x1) * (abs $ y2 - y1)
 
-myCircle = Circle 10 20 10
+myCircle = CircleS 10 20 10
 
 areaOfCircle = area myCircle -- 314.15927
-areaOfRectangle = area $ Rectangle 0 0 10 10 -- 100.0
+areaOfRectangle = area $ RectangleS 0 0 10 10 -- 100.0
 
 -- value constructors are functions
-listOfCircles = map (Circle 10 20) [4,5,6] -- [Circle 10.0 20.0 4.0,Circle 10.0 20.0 5.0,Circle 10.0 20.0 6.0]
+listOfCircles = map (CircleS 10 20) [4,5,6] -- [CircleS 10.0 20.0 4.0,CircleS 10.0 20.0 5.0,CircleS 10.0 20.0 6.0]
 
 data Point = Point Float Float deriving (Show)
-data Shape' = Circle' Point Float | Rectangle' Point Point deriving (Show) -- Shape' better Shape implementation
+data Shape = Circle Point Float | Rectangle Point Point deriving (Show) -- Shape better ShapeS implementation
 
-area' :: Shape' -> Float
-area' (Circle' _ r) = pi * r ^ 2
-area' (Rectangle' (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1) -- nested pattern match
+area' :: Shape -> Float
+area' (Circle _ r) = pi * r ^ 2
+area' (Rectangle (Point x1 y1) (Point x2 y2)) = (abs $ x2 - x1) * (abs $ y2 - y1) -- nested pattern match
 
 -- move shape on x and y axis
 nudge :: Shape -> Float -> Float -> Shape
 nudge (Circle (Point x y) r) a b = Circle (Point (x+a) (y+b)) r -- new circle with x y coords
-nudge (Rectangle (Point x1 y1) (Point x2 y2) a b) = Rectangle (Point (x1+a) (y1+b)) (Point (x2+a) (y1+b))
+nudge (Rectangle (Point x1 y1) (Point x2 y2)) a b = Rectangle (Point (x1+a) (y1+b)) (Point (x2+a) (y1+b))
+
+---- Record syntax
+
+-- company, model, year are field names
+data Car = Car { company :: String, model :: String, year :: Int } deriving (Show)
+
+myCar = Car { company="Ford", model="Mustang", year=1967 } -- no proper order of fields
+myCarsCompany = company myCar -- automatically created function that look up fields in Car data type
+
+-- pattern matching record syntax
+tellCar :: Car -> String
+tellCar (Car {company=c, model=m, year=y}) = "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
