@@ -569,7 +569,7 @@ string2digits = map digitToInt . filter isDigit
 phoneBookInt :: Map.Map String [Int]
 phoneBookInt = Map.map string2digits phoneBook
 
----- New Data types
+---- New data types
 
 -- CircleS is value constructor, Float Float Float are fields
 -- CircleS is a function that takes three Float and returns ShapeS
@@ -613,3 +613,27 @@ myCarsCompany = company myCar -- automatically created function that look up fie
 -- pattern matching record syntax
 tellCar :: Car -> String
 tellCar (Car {company=c, model=m, year=y}) = "This " ++ c ++ " " ++ m ++ " was made in " ++ show y
+
+---- Type parameters
+
+-- Vector has type parameter, its now called type constructor
+-- Vector is a parametrized type
+-- we want a to be Int, Integer, Double -- therefore type parameter
+data Vector a = Vector a a a deriving (Show) 
+
+-- we could include type class to Vector type in data declaration
+-- convention not to do this, because then we must repeat it in all functions - also those that don't need it
+-- data (Num a) => Vector a = Vector a a a deriving (Show) 
+
+vplus :: (Num a)  => Vector a -> Vector a -> Vector a -- we can now use "a" here
+(Vector i j k) `vplus` (Vector l m n) = Vector (i+l) (j+m) (k+n)
+
+dotProd :: (Num a) => Vector a -> Vector a -> a
+(Vector i j k) `dotProd` (Vector l m n) = i*l + j*m + k*n 
+
+vmult :: (Num a) => Vector a -> a -> Vector a
+(Vector i j k) `vmult` m = Vector (i*m) (j*m) (k*m)
+
+-- when declaring a data type:
+-- part before = is the type constructor
+-- part after = is value constructor
