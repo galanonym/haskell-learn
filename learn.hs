@@ -144,8 +144,8 @@ False &&& _ = False
 
 ---- if..then..else
 doubleSmallNumber x = if x > 100
-                        then x
-                        else x * 2 -- else is mandatory
+  then x
+  else x * 2 -- else is mandatory
 
 doubleSmallNumber' x = (if x >100 then x else x * 2) + 1
 
@@ -262,9 +262,10 @@ bmiBulk' listOfPairs = [bmi | (w, h) <- listOfPairs, let bmi = w / h ^ 2]
 -- can be used as experssion
 -- similar to switch statement
 describeList :: [a] -> String
-describeList list = "This list is " ++ case list of [] -> "empty."
-                                                    [x] -> "singleton."
-                                                    other -> "longer."
+describeList list = "This list is " ++ case list of 
+  [] -> "empty."
+  [x] -> "singleton."
+  other -> "longer."
 
 ---- Recursion
 
@@ -637,3 +638,54 @@ vmult :: (Num a) => Vector a -> a -> Vector a
 -- when declaring a data type:
 -- part before = is the type constructor
 -- part after = is value constructor
+
+---- Type synonyms
+
+type PhoneNumber = String
+type Name = String
+type PhoneBook = [(PhoneNumber, Name)]
+
+inPhoneBook :: Name -> PhoneNumber -> PhoneBook -> Bool -- more readable
+inPhoneBook name number book = (name, number) `elem` book
+
+-- parameterized type that represents association list type
+-- but any type as key and value
+type AssocList k v = [(k, v)]
+
+-- AssocList is a type constructor that takes two types 
+-- and produces a concrete type [(Int, String)]
+myListOfStuff :: AssocList Int String
+myListOfStuff = [(1, "boat"), (2, "car"), (3, "cycle")]
+
+-- NB! we can also partially apply type constructors to produce more types
+
+-- example of type for function getByKey
+getByKey :: (Eq k) => k -> AssocList k v -> Maybe v
+getByKey _ [] = Nothing
+getByKey search ((key, value):restOfList)
+  | search == key = Just value
+  | search /= key = getByKey search restOfList 
+
+-- Type synonyms (and types generally) can be used only in the type portion of Haskell
+-- it includes data and type declarations and after :: in type declarations or type annotations
+
+data LockerState = Taken | Free deriving (Show, Eq)
+type Code = String
+type LockerMap = Map.Map Int (LockerState, Code)
+
+lockers :: LockerMap
+lockers = Map.fromList [
+  (101, (Free, "3924")),
+  (102, (Taken, "2342")),
+  (103, (Free, "3343"))
+                       ]
+
+-- Either a b, where Left is error message, and Right is result
+lockerLookup :: Int -> LockerMap -> Either String Code
+-- map lookup returns Maybe, so Nothing or Just
+-- case <expression> of <patterns..>, returns expression
+lockerLookup lockerNumber map = case Map.lookup lockerNumber map of
+  Nothing -> Left $ "Locker " ++ show lockerNumber ++ " doesn't exist!" 
+  Just (state, code) ->  if state /= Taken 
+    then Right code
+    else Left $ "Locker " ++ show lockerNumber ++ " is taken!"
