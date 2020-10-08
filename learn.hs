@@ -689,3 +689,42 @@ lockerLookup lockerNumber map = case Map.lookup lockerNumber map of
   Just (state, code) ->  if state /= Taken 
     then Right code
     else Left $ "Locker " ++ show lockerNumber ++ " is taken!"
+
+---- Recursive data types
+
+-- it is either an empty list or a combination of head with some value and rest of list
+-- cons means : (list constructor)
+-- cons takes value, another list and returns a list
+data List' a = Empty' | Cons' a (List' a) deriving (Show, Read, Eq, Ord)
+-- data List a = Empty | Cons {listHead :: a, listTail:: List a} deriving (Show, Read, Eq, Ord) -- in record syntax
+
+ourList :: List' Int
+ourList = 3 `Cons'` (4 `Cons'` (5 `Cons'` Empty'))
+-- equivalent to:
+-- 3:(4:(5:[]))
+
+-- functions with only special chars are automatically infix
+-- this can be done with value constructors too
+-- but infix constructors must begin with :
+
+-- Our own : operator
+
+-- fixity declaration gives functions fixity and defines:
+-- how tightly operator binds
+-- is it left or right associative 
+infixr 5 :-:
+
+data List a = Empty | a :-: (List a) deriving (Show, Read, Eq, Ord)
+ourBetterList = 3 :-: 4 :-: 5 :-: Empty
+
+-- Our own ++ operator
+
+infixr 5 ^++
+(^++) :: List a -> List a -> List a
+Empty ^++ ys = ys
+(x :-: xs) ^++ ys = x :-: (xs ^++ ys) -- pattern matching works because it is about matching value constructors
+
+ourListA = 3 :-: 4 :-: 5 :-: Empty
+ourListB = 6 :-: 7 :-: Empty
+ourListSum = ourListA ^++ ourListB
+
