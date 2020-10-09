@@ -97,10 +97,12 @@ import qualified Geometry.Cuboid as Cuboid
 -- > filter (>3) [1,4,5,6,3,2] -- [4,5,6] -- returns the list of those elements that satisfy the predicate
 
 -- > foldl (\acc x -> acc + x) 0 [1,2,3] -- 6 -- takes binary function, starting accumulator and list, applies function from left to each element accumulationg
--- > foldr (\x acc -> x : acc) [] [1,2,3] -- [3,2,1] -- takes binary function, starting accumulator and list, applies function right to each element accumulationg
+-- > foldr (\x acc -> x : acc) [] [1,2,3] -- [3,2,1] -- takes binary function, starting accumulator and list, applies function from right to each element accumulationg
 -- > foldl1 -- assumes first element from left as accumulator and moves to next
 -- > foldr1 -- assumes first element from right as accumulator and moves to next
 -- > scanl, scanr, scanl1, scanr1 -- same as fold's, but report all intermediate accumulator states in a list, used to debug scans
+
+-- > const 5 8 -- 5 -- always returns first argument, used when we want to replace arguments in function composition with a constant value so -- > map (const 42) [1..5] -- [42,42,42,42,42]
 
 ---- Data.List functions
 
