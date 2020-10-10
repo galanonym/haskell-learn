@@ -574,6 +574,7 @@ phoneBookInt = Map.map string2digits phoneBook
 
 ---- New data types
 
+-- ShapeS is the new data type
 -- CircleS is value constructor, Float Float Float are fields
 -- CircleS is a function that takes three Float and returns ShapeS
 -- deriving (Show) make this type part of Show type class, to be able to print to console
@@ -730,3 +731,27 @@ ourListA = 3 :-: 4 :-: 5 :-: Empty
 ourListB = 6 :-: 7 :-: Empty
 ourListSum = ourListA ^++ ourListB
 
+---- Custom Type Classes
+
+-- type constructor = value constructor
+data TrafficLight = Red | Yellow | Green
+-- we are not deriving type classes we will write instances of type classes by hand
+
+-- instance, means make our type (TrafficLight) an instance of the type class Eq
+instance Eq TrafficLight where
+  -- to fullfil minimal complete definition of Eq we need to overwrite either == or /=
+  Red == Red = True
+  Yellow == Yellow = True
+  Green == Green = True
+  _ == _ = False -- == and /= are defined in type class definition of Eq in terms of each other
+
+-- to fullfil minimal comtlete definition of Show we need to implement its show function
+instance Show TrafficLight where
+  show Red = "Red light"
+  show Yellow = "Yellow light"
+  show Green = "Green light"
+
+isRedEqualRed = Red == Red
+isRedEqualGreen = Red == Green
+isRedInside = Red `elem` [Red, Green, Yellow] -- elem works on Eq type class
+-- > [Red, Green] -- [Red light, Green light] -- show
