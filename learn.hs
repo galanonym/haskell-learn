@@ -75,6 +75,7 @@ import qualified Geometry.Cuboid as Cuboid
 -- > cycle [5,4,3] -- [5,4,3,5,4,3,5,4,3 ... (to infinity)]
 -- > repeat 5 -- [5,5,5,5 ... (to infinity)]
 -- > replicate 3 5 -- [5, 5, 5]
+-- > concat [[2,3], [1,2]] -- [2,3,1,2] -- concatenates lists of lists
 -- > and [True, False, True] -- False
 -- > and [True, True, True] -- True
 -- > (&&) True False -- False
@@ -87,7 +88,7 @@ import qualified Geometry.Cuboid as Cuboid
 
 -- > compare 2 4 -- LT -- checks for equality, returns GT LT EQ of Ordering type
 -- > show 5 -- "5" -- convert value as string
--- > read "True" :: Bool -- True -- convert string, type must be supplied
+-- > read "True" :: Bool -- True -- convert a string, type must be supplied
 
 -- > flip replicate 3 5 -- [3,3,3,3,3] -- flips next function arguments
 -- > flip (:) [2] 1 -- [1,2] -- flips : so last argument is added to beginning of list
