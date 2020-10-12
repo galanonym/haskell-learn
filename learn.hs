@@ -11,7 +11,11 @@ import qualified Data.Map as Map -- Map functions clash with Prelude
 
 import qualified Geometry.Sphere as Sphere -- both have function "area" defined
 import qualified Geometry.Cuboid as Cuboid
+import qualified Geometry.Cuboid as Cuboid
 -- > Cuboid.area 1 2 3 -- 22.0 
+
+import qualified Structure.BinaryTree as BinaryTree
+
 
 ---- Built in types
 
@@ -56,6 +60,7 @@ import qualified Geometry.Cuboid as Cuboid
 -- > ceiling 1.09 -- 2
 -- > floor 1.89 -- 1
 -- > round 1.89 -- 2
+-- > id True -- True -- just return argument
 
 -- > head [5,4,3] -- 5
 -- > tail [5,4,3] -- [4,3] -- chops off head
@@ -732,11 +737,12 @@ ourListA = 3 :-: 4 :-: 5 :-: Empty
 ourListB = 6 :-: 7 :-: Empty
 ourListSum = ourListA ^++ ourListB
 
----- Custom Type Classes
+---- Instances of Type Classes
 
 -- type constructor = value constructor
 data TrafficLight = Red | Yellow | Green
 -- we are not deriving type classes we will write instances of type classes by hand
+-- TrafficLight is a concrete type (without type variable)
 
 -- instance, means make our type (TrafficLight) an instance of the type class Eq
 instance Eq TrafficLight where
@@ -756,3 +762,45 @@ isRedEqualRed = Red == Red
 isRedEqualGreen = Red == Green
 isRedInside = Red `elem` [Red, Green, Yellow] -- elem works on Eq type class
 -- > [Red, Green] -- [Red light, Green light] -- show
+
+---- Custom Type Classes
+
+-- TruthyOrFalsy type class defines one function
+-- isTruthy takes one value of a type and considers if it is truthy or falsy
+class TruthyOrFalsy a where
+  isTruthy :: a -> Bool -- minimal complete definition
+
+-- can add (Num a, Eq a) => constraint, but must define
+-- {-# LANGUAGE UndecidableInstances, FlexibleInstances #-} -- https://stackoverflow.com/a/33600361
+-- instance (Num a, Eq a) => TruthyOrFalsy a where 
+instance TruthyOrFalsy Int where 
+  isTruthy 0 = False
+  isTruthy _ = True
+
+instance TruthyOrFalsy [a] where
+  isTruthy [] = False
+  isTruthy _ = True
+
+instance TruthyOrFalsy Bool where
+  isTruthy = id -- identity function always returns first argument
+
+instance TruthyOrFalsy (Maybe a) where
+  isTruthy (Just _) = True
+  isTruthy Nothing = False
+
+instance TruthyOrFalsy (BinaryTree.Tree a) where
+  isTruthy BinaryTree.EmptyTree = False
+  isTruthy _ = True
+
+instance TruthyOrFalsy TrafficLight where
+  isTruthy Red = False
+  isTruthy _ = True
+
+ifTruthy :: (TruthyOrFalsy y) => y -> a -> a -> a
+ifTruthy value truthyResult falsyResult =
+  if isTruthy value
+  then truthyResult
+  else falsyResult
+
+-- > ifTruthy [] "YEAH!" "NOPE!" -- "NOPE!"
+-- > ifTruthy [1,2,3] "YEAH!" "NOPE!" -- "YEAH!"

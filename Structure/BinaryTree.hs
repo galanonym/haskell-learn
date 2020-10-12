@@ -1,4 +1,5 @@
-module Structure.BinaryTree (treeInsert, treeElem) where
+module Structure.BinaryTree (treeInsert, treeElem, exampleTree, Tree(..)) where -- exports everything
+-- module Structure.BinaryTree (treeInsert, treeElem) where -- exports only functions not constructors
 
 -- a tree is either an empty tree or an alament that contains a value and two trees
 -- EmptyTree and Node are value constructors
