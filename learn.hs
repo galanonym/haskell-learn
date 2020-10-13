@@ -81,8 +81,10 @@ import qualified Structure.BinaryTree as BinaryTree
 -- > repeat 5 -- [5,5,5,5 ... (to infinity)]
 -- > replicate 3 5 -- [5, 5, 5]
 -- > concat [[2,3], [1,2]] -- [2,3,1,2] -- concatenates lists of lists
--- > and [True, False, True] -- False
 -- > and [True, True, True] -- True
+-- > and [True, False, True] -- False
+-- > or [True, False, True] -- True
+-- > or [False, False, False] -- False
 -- > (&&) True False -- False
 -- > (||) True False -- True
 
@@ -174,12 +176,18 @@ big13number = [13,26..] !! 124 -- infinite lists
 
 filterSpecial :: [Char] -> [Char]
 filterSpecial string = [ character | character  <- string, character `elem` '_':['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'] ]
--- | -- how we want elements to be reflected in resulting list
+-- before | -- how we want elements to be reflected in resulting list
 -- number <- numbers -- we draw elements from this list
 -- , -- predicate/condition, one or more
 
 boomBangs numbers = [ if number < 10 then "Boom!" else "Bang!" | number <- numbers, odd number ]
 
+-- multiple lists
+multipleTuples :: [(Int, Char)]
+multipleTuples = [(n, c) | n <- [1,2,3], c <- ['a','b']]
+-- [(1,'a'),(1,'b'),(2,'a'),(2,'b'),(3,'a'),(3,'b')]
+
+-- Triangles example:
 -- Find right triangle that has sides are integers, length of each side is 0<x<10, sum of all sides is 24
 -- generate all possible triples with elements less or equal 10
 triples = [ (a,b,c) | c <- [1..10], a <- [1..10], b <- [1..10] ] 
@@ -690,6 +698,8 @@ lockers = Map.fromList [
                        ]
 
 -- Either a b, where Left is error message, and Right is result
+-- implementation (| means or):
+-- data Either a b = Left a | Right b
 lockerLookup :: Int -> LockerMap -> Either String Code
 -- map lookup returns Maybe, so Nothing or Just
 -- case <expression> of <patterns..>, returns expression
