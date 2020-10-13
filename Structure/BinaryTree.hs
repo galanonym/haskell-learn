@@ -44,3 +44,13 @@ Node 4
 
 is7 = treeElem 7 exampleTree
 is9 = treeElem 9 exampleTree
+
+instance Functor Tree where
+  fmap f EmptyTree = EmptyTree
+  fmap f (Node value leftTree rightTree) = Node (f value) (fmap f leftTree) (fmap f rightTree)
+  -- our function applied to first node value, and then applied recursivly to leftTree and rightTree
+
+exampleTreeMulti = fmap (*2) exampleTree
+-- Node 8 (Node 2 EmptyTree (Node 6 EmptyTree EmptyTree)) (Node 12 (Node 10 EmptyTree EmptyTree) (Node 16 (Node 14 EmptyTree EmptyTree) EmptyTree))
+
+-- !Warning - after fmapping the tree may not be longer a binary search tree, just normal binary tree, because not following rule where rightTree has values smaller then value and leftTree bigger that value
