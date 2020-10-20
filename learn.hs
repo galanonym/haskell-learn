@@ -77,6 +77,7 @@ import qualified Structure.BinaryTree as BinaryTree
 -- > sum [5,4,3] -- 12 
 -- > product [5,4,3] -- 60
 -- > elem 5 [5,4,3] -- True -- is element present in list
+-- > (!!) [5,4,3] 2 -- 3 -- find 2th element (from zero)
 -- > cycle [5,4,3] -- [5,4,3,5,4,3,5,4,3 ... (to infinity)]
 -- > repeat 5 -- [5,5,5,5 ... (to infinity)]
 -- > replicate 3 5 -- [5, 5, 5]
@@ -103,6 +104,7 @@ import qualified Structure.BinaryTree as BinaryTree
 
 -- > map (+3) [5,4,3] -- [8, 7, 6] -- applies function to each element of list, returns new list
 -- > filter (>3) [1,4,5,6,3,2] -- [4,5,6] -- returns the list of those elements that satisfy the predicate
+-- > all (>3) [4,5,6] -- True -- determines if all elements in structutre (list) satisfy the predicate
 
 -- > foldl (\acc x -> acc + x) 0 [1,2,3] -- 6 -- takes binary function, starting accumulator and list, applies function from left to each element accumulationg
 -- > foldr (\x acc -> x : acc) [] [1,2,3] -- [3,2,1] -- takes binary function, starting accumulator and list, applies function from right to each element accumulationg
@@ -116,6 +118,7 @@ import qualified Structure.BinaryTree as BinaryTree
 
 -- > nub [1,1,2,3,3] -- [1,2,3] -- only unique list elements
 -- > words "hey you boss" -- ["hey", "you", "boss"] -- splits string into list of words by whitespace
+-- > unwords ["hey", "you", "boss"] -- "hey you boss" -- joins list of words into string with space
 -- > group [1,1,2,3,3,1] -- [[1,1], [2], [3,3], [1]] -- groups adjacent elements
 -- > sort [1,3,2] -- [1,2,3]
 -- > tails [1,2,3] -- [[1,2,3], [2,3], [3], []] -- takes list and sucessfully applies tails to it
@@ -124,6 +127,10 @@ import qualified Structure.BinaryTree as BinaryTree
 -- > isInfixOf [2,3] [1,2,3,4] -- True -- if sectond list includes first one
 -- > foldl' - stricter version of foldl that does not stack overflow
 -- > find (>4) [3,4,5,6] -- Just 5 -- stops after finding element matching predicate, returns Maybe type
+
+---- Maybe
+
+-- > maybe "Default value" show $ Just 5 -- unwraps Just 5 through show function, displays "Default value" if Nothing 
 
 ---- Data.Char functions
 
